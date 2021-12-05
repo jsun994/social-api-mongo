@@ -63,7 +63,7 @@ const thoughtController = {
         .catch(err => res.json(err));
     },
     addReaction({ params, body }, res) {
-        User.findOneAndUpdate(
+        Thought.findOneAndUpdate(
             { _id: params.thoughtId },
             { $push: { reactions: body } },
             { new: true, runValidators: true }
