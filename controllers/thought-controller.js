@@ -60,8 +60,21 @@ const thoughtController = {
     },
     deleteThought({ params }, res) {
         Thought.findOneAndDelete({ _id: params.id })
-        .select('-__v')
-        .then(dbThoughtData => res.json(dbThoughtData))
+        .then(dbThoughtData => {
+            if (!dbThoughtData) {
+                res.status(404).json({ message: 'no thought found with this id!' });
+                return;
+            }
+            //delete reference
+            User.findOneAndUpdate(
+                { username: dbThoughtData.username },
+                { $pull: { thoughts: params.id } }
+            )
+            .then(dbUserData => {
+                res.json(dbUserData);
+            })
+            .catch(err => res.json(err));
+        })
         .catch(err => res.json(err));
     },
     addReaction({ params, body }, res) {
