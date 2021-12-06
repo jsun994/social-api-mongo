@@ -70,8 +70,8 @@ const thoughtController = {
                 { username: dbThoughtData.username },
                 { $pull: { thoughts: params.id } }
             )
-            .then(dbUserData => {
-                res.json(dbUserData);
+            .then(dbData => {
+                res.json(dbData);
             })
             .catch(err => res.json(err));
         })
