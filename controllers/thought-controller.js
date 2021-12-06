@@ -3,6 +3,10 @@ const { Thought, User } = require('../models');
 const thoughtController = {
     getAllThoughts(req, res) {
         Thought.find({})
+        .populate({
+            path: 'reactions',
+            select: '-__v'
+        })
         .select('-__v')
         .sort({ _id: -1 })
         .then(dbThoughtData => res.json(dbThoughtData))
@@ -11,6 +15,7 @@ const thoughtController = {
             res.sendStatus(400);
         });
     },
+
     getThoughtById({ params }, res) {
         Thought.findOne({ _id: params.id })
         .populate({
@@ -24,6 +29,7 @@ const thoughtController = {
             res.sendStatus(400);
         });
     },
+
     createThought({ params, body }, res) {
         Thought.create(body)
         .then(({ _id }) => {
@@ -42,6 +48,7 @@ const thoughtController = {
         })
         .catch(err => res.json(err));
     },
+
     updateThought({ params, body }, res) {
         Thought.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
         .populate({
@@ -58,6 +65,7 @@ const thoughtController = {
         })
         .catch(err => res.json(err));
     },
+
     deleteThought({ params }, res) {
         Thought.findOneAndDelete({ _id: params.id })
         .then(dbThoughtData => {
@@ -77,6 +85,7 @@ const thoughtController = {
         })
         .catch(err => res.json(err));
     },
+
     addReaction({ params, body }, res) {
         Thought.findOneAndUpdate(
             { _id: params.thoughtId },
@@ -97,6 +106,7 @@ const thoughtController = {
         })
         .catch(err => res.json(err));
     },
+    
     deleteReaction({ params }, res) {
         Thought.findOneAndUpdate(
             { _id: params.thoughtId },
